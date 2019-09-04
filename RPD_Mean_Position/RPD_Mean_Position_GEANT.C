@@ -36,10 +36,10 @@ using namespace std;
 
 
 
-void RPD_Mean_Position(){
+void RPD_Mean_Position_GEANT(){
 
 	/// control variables
-	double Fiber_Subtraction_Percentage_[2] = {0.05, 0.05};
+	double Fiber_Subtraction_Percentage_[2] = {0.00, 0.00};
 	int NumberBinsPosition1D = 100;
 	int NumberBinsPosition2D = 100;
 
@@ -101,12 +101,12 @@ void RPD_Mean_Position(){
 
 	RPD_Cuts_Generator(RunNumber, RPD_Cuts); //automatically determening runnumber and then choosing the cut values associated with that run
 	RPD_Frac_Generator(RunNumber, RPD_Frac);
-	
+
 	restart:
 	for (int i = 0; i < ZDCDigiTree->GetEntries(); i++) {
 		ZDCDigiTree->GetEntry(i);
 
-		for (int n = 0; n < NChannels; n++) { //iterates through all channels of both ZDC + and -
+/*		for (int n = 0; n < NChannels; n++) { //iterates through all channels of both ZDC + and -
 
 			int side = (int)((zsideLeaf->GetValue(n) + 1) / 2.0);
 			int type = (int)(sectionLeaf->GetValue(n)) - 1;
@@ -132,15 +132,16 @@ void RPD_Mean_Position(){
 					RawDataRPD[side][channel][TS] = TS_ARRAY[TS];
 				}
 			}
-		}//end of n 50 loop
+		}*///end of n 50 loop
 		
-		double OC_RPD_Data[2][16] = {0};
+	//	double OC_RPD_Data[2][16] = {{3722, 9023, 9985, 3319, 28957, 194653, 189180, 28047, 31514, 220689, 218147, 31090, 12178, 98593, 99981, 10864},{3722, 9023, 9985, 3319, 28957, 194653, 189180, 28047, 31514, 220689, 218147, 31090, 12178, 98593, 99981, 10864}};
 
-		RPD_Data_Organizer_and_Cleaner(RawDataRPD, RPD_Cuts, OC_RPD_Data); // cleans and organizes RPD data into a sensible order start top left , read left to right, finish bottom right Quartz blocks
+		//RPD_Data_Organizer_and_Cleaner(RawDataRPD, RPD_Cuts, OC_RPD_Data); // cleans and organizes RPD data into a sensible order start top left , read left to right, finish bottom right Quartz blocks
 
-		double OCC_RPD_Data[2][16] = {0};
+		double OCC_RPD_Data[2][16] = {{7602, 9392, 3859, 1666, 191228, 204780, 31885, 15308, 232000, 247305, 33926, 15570, 99402, 103221, 11027, 3089},{7602, 9392, 3859, 1666, 191228, 204780, 31885, 15308, 232000, 247305, 33926, 15570, 99402, 103221, 11027, 3089}};
 
-		for (int s = 0; s < 2; s ++){
+
+		/*for (int s = 0; s < 2; s ++){
 			if (OC_RPD_Data[s][0] == -343){ //NOTE this can produce arrays that are defualt filled with zeros need logic to not fill if entire array is zeros
 				N_bad_RPDs++;
 				continue;
@@ -149,7 +150,7 @@ void RPD_Mean_Position(){
 			for ( int c = 0; c < 16; c++){
 				OCC_RPD_Data[s][c] = (OC_RPD_Data[s][c] * RPD_Frac[s][c]);
 			}
-		}
+		}*/
 
 		double OCCS_RPD_Data[2][16] = {0}; // Organized Cleaned Centered SubtractedfiberEffect
 
@@ -186,21 +187,21 @@ void RPD_Mean_Position(){
 	}//END EVENT LOOP
 
 	RPD_Pos_Y_MEAN = RPD_Pos_Y->GetMean();
-	cout << "RPD_Pos_Y_MEAN " << RPD_Pos_Y_MEAN << " Fiber% " << Fiber_Subtraction_Percentage_[1] << endl;
+	//cout << "RPD_Pos_Y_MEAN " << RPD_Pos_Y_MEAN << " Fiber% " << Fiber_Subtraction_Percentage_[1] << endl;
 	RPD_Neg_Y_MEAN = RPD_Neg_Y->GetMean();
-	cout << "RPD_Neg_Y_MEAN " << RPD_Neg_Y_MEAN << " Fiber% " << Fiber_Subtraction_Percentage_[0] << endl;
+	//cout << "RPD_Neg_Y_MEAN " << RPD_Neg_Y_MEAN << " Fiber% " << Fiber_Subtraction_Percentage_[0] << endl;
 	
 	if ( RPD_Pos_Y_MEAN < 0 and RPD_Neg_Y_MEAN < 0 ){
 		Fiber_Subtraction_Percentage_[1] += 0.01;
 		RPD_Pos_X->Reset();
 		RPD_Pos_Y->Reset();
 		RPD_XY_Pos->Reset();
-		cout << "upping Pos" << endl;
+		//cout << "upping Pos" << endl;
 		Fiber_Subtraction_Percentage_[0] += 0.01;
 		RPD_Neg_X->Reset();
 		RPD_Neg_Y->Reset();
 		RPD_XY_Neg->Reset();
-		cout << "upping Neg" << endl;
+		//cout << "upping Neg" << endl;
 		goto restart;
 	}
 	else{
@@ -209,7 +210,7 @@ void RPD_Mean_Position(){
 			RPD_Pos_X->Reset();
 			RPD_Pos_Y->Reset();
 			RPD_XY_Pos->Reset();
-			cout << "upping Pos" << endl;
+			//cout << "upping Pos" << endl;
 			goto restart;
 		}
 		else{
@@ -220,7 +221,7 @@ void RPD_Mean_Position(){
 			RPD_Neg_X->Reset();
 			RPD_Neg_Y->Reset();
 			RPD_XY_Neg->Reset();
-			cout << "upping Neg" << endl;
+			//cout << "upping Neg" << endl;
 			goto restart;
 	
 		}
