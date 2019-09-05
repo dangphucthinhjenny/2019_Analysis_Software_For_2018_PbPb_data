@@ -28,8 +28,8 @@ also want cent
 #include "TLeaf.h"
 #include "TROOT.h"
 
-#include "MASTER_HEADER.h"
-#include "X_Y_P_N_RPD_Mean_Position_Calculator.h"
+#include "/home/ebadams/TEST_FOR_ANALYSIS_SOFTWARE/HEADER/MASTER_HEADER.h"
+
 
 
 using namespace std;
@@ -55,6 +55,8 @@ void RPD_Mean_Position(){
 
 	bool posNOTgood = true;
 	bool negNOTgood = true;
+
+
 
 	///
 
@@ -158,25 +160,41 @@ void RPD_Mean_Position(){
 		Returns_X_Y_P_N_RPD_Mean_Position(OCCS_RPD_Data, "Off", EricWeighter, PosX, PosY, NegX, NegY); // produces mean x and y positions
 
 		if (posNOTgood){
-			if (PosX != -343) {
-				RPD_Pos_X->Fill(PosX);
+			P = 0;
+			for (int r = 0; r < 16; r++){
+				if(OCCS_RPD_Data[1][r] == 0){
+					P++;
+				}
 			}
-			if (PosY != -343) {
-				RPD_Pos_Y->Fill(PosY);
-			}
-			if (PosX != -343 and PosY != -343){
-				RPD_XY_Pos->Fill(PosX,PosY);
+			if (P < 2){
+				if (PosX != -343) {
+					RPD_Pos_X->Fill(PosX);
+				}
+				if (PosY != -343) {
+					RPD_Pos_Y->Fill(PosY);
+				}
+				if (PosX != -343 and PosY != -343){
+					RPD_XY_Pos->Fill(PosX,PosY);
+				}
 			}
 		}
 		if (negNOTgood){
-			if (NegX != -343) {
-				RPD_Neg_X->Fill(NegX);
+			N = 0;
+			for (int r = 0; r < 16; r++){
+				if(OCCS_RPD_Data[0][r] == 0){
+					N++;
+				}
 			}
-			if (NegY != -343){
-				RPD_Neg_Y->Fill(NegY);
-			}
-			if (NegX != -343 and NegY != -343){
-				RPD_XY_Neg->Fill(NegX,NegY);
+			if (N < 2){
+				if (NegX != -343) {
+					RPD_Neg_X->Fill(NegX);
+				}
+				if (NegY != -343){
+					RPD_Neg_Y->Fill(NegY);
+				}
+				if (NegX != -343 and NegY != -343){
+					RPD_XY_Neg->Fill(NegX,NegY);
+				}
 			}
 		}
 		

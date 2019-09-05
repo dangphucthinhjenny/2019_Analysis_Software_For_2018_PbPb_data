@@ -29,7 +29,7 @@ also want cent
 #include "TROOT.h"
 #include "TChain.h"
 
-#include "MASTER_HEADER.h"
+#include "/home/ebadams/TEST_FOR_ANALYSIS_SOFTWARE/HEADER/MASTER_HEADER.h"
 
 
 
@@ -40,7 +40,7 @@ using namespace std;
 void RPD_Mean_Position_CHAIN(){
 
 	/// control variables
-	double Fiber_Subtraction_Percentage_[2] = {0.05, 0.05};
+	double Fiber_Subtraction_Percentage_[2] = {0.17, 0.27};
 	int NumberBinsPosition1D = 100;
 	int NumberBinsPosition2D = 100;
 
@@ -193,25 +193,41 @@ void RPD_Mean_Position_CHAIN(){
 		Returns_X_Y_P_N_RPD_Mean_Position(OCCS_RPD_Data, "Off", EricWeighter, PosX, PosY, NegX, NegY); // produces mean x and y positions
 
 		if (posNOTgood){
-			if (PosX != -343) {
-				RPD_Pos_X->Fill(PosX);
+			P = 0;
+			for (int r = 0; r < 16; r++){
+				if(OCCS_RPD_Data[1][r] == 0){
+					P++;
+				}
 			}
-			if (PosY != -343) {
-				RPD_Pos_Y->Fill(PosY);
-			}
-			if (PosX != -343 and PosY != -343){
-				RPD_XY_Pos->Fill(PosX,PosY);
+			if (P < 2){
+				if (PosX != -343) {
+					RPD_Pos_X->Fill(PosX);
+				}
+				if (PosY != -343) {
+					RPD_Pos_Y->Fill(PosY);
+				}
+				if (PosX != -343 and PosY != -343){
+					RPD_XY_Pos->Fill(PosX,PosY);
+				}
 			}
 		}
 		if (negNOTgood){
-			if (NegX != -343) {
-				RPD_Neg_X->Fill(NegX);
+			N = 0;
+			for (int r = 0; r < 16; r++){
+				if(OCCS_RPD_Data[0][r] == 0){
+					N++;
+				}
 			}
-			if (NegY != -343){
-				RPD_Neg_Y->Fill(NegY);
-			}
-			if (NegX != -343 and NegY != -343){
-				RPD_XY_Neg->Fill(NegX,NegY);
+			if (N < 2){
+				if (NegX != -343) {
+					RPD_Neg_X->Fill(NegX);
+				}
+				if (NegY != -343){
+					RPD_Neg_Y->Fill(NegY);
+				}
+				if (NegX != -343 and NegY != -343){
+					RPD_XY_Neg->Fill(NegX,NegY);
+				}
 			}
 		}
 		
