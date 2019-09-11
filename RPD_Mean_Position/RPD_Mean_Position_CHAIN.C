@@ -241,7 +241,7 @@ void RPD_Mean_Position_CHAIN(){
 	RPD_Neg_Y_MEAN = RPD_Neg_Y->GetMean();
 	cout << "RPD_Neg_Y_MEAN " << RPD_Neg_Y_MEAN << " Fiber% " << Fiber_Subtraction_Percentage_[0] << endl;
 	
-	if( RPD_Pos_Y_MEAN < 0 ){
+	/*if( RPD_Pos_Y_MEAN < 0 ){
 		Fiber_Subtraction_Percentage_[1] += 0.01;
 		RPD_Pos_X->Reset();
 		RPD_Pos_Y->Reset();
@@ -263,7 +263,7 @@ void RPD_Mean_Position_CHAIN(){
 	}
 	else{
 		negNOTgood = false;
-	}
+	}*/
 
 	TCanvas* c1 = new TCanvas(Form("c1"), Form("RUN_%d", RunNumber), 2000, 2000);
 

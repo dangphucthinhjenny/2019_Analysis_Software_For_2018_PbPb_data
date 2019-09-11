@@ -32,11 +32,32 @@ also want cent
 #include "/home/ebadams/TEST_FOR_ANALYSIS_SOFTWARE/HEADER/MASTER_HEADER.h"
 
 
+
 using namespace std;
 
 
 
-void Fractional_weight_Eric_weighter_CHAIN(){
+void RPD_Mean_Position_CHAIN_NEAR_RAW(){
+
+	/// control variables
+	double Fiber_Subtraction_Percentage_[2] = {0.17, 0.27};
+	int NumberBinsPosition1D = 100;
+	int NumberBinsPosition2D = 100;
+
+	double PosX = 0;
+	double PosY = 0;
+	double NegX = 0;
+	double NegY = 0;
+
+	double RPD_Pos_Y_MEAN = 0;
+	double RPD_Neg_Y_MEAN = 0;
+
+	double EricWeighter[16] = {0};
+
+	bool posNOTgood = true;
+	bool negNOTgood = true;
+
+	///
 
 	TChain chain("zdcdigi");
 	chain.Add("/home/ebadams/PbPb2018_CMS_DATA_MB2/HIMinimumBias2/crab_rereco_PbPb2018_AOD_MinBias2_326943_ZDC/0000/testoftrimmer/parallelization_of_trimmer/ZDC_trimmed_rereco_PbPb2018_AOD_MinBias2_326943_RPDZDC_1.root");
@@ -69,14 +90,7 @@ void Fractional_weight_Eric_weighter_CHAIN(){
 	chain.Add("/home/ebadams/PbPb2018_CMS_DATA_MB2/HIMinimumBias2/crab_rereco_PbPb2018_AOD_MinBias2_326943_ZDC/0000/testoftrimmer/parallelization_of_trimmer/ZDC_trimmed_rereco_PbPb2018_AOD_MinBias2_326943_RPDZDC_6.root");
 	chain.Add("/home/ebadams/PbPb2018_CMS_DATA_MB2/HIMinimumBias2/crab_rereco_PbPb2018_AOD_MinBias2_326943_ZDC/0000/testoftrimmer/parallelization_of_trimmer/ZDC_trimmed_rereco_PbPb2018_AOD_MinBias2_326943_RPDZDC_7.root");
 	chain.Add("/home/ebadams/PbPb2018_CMS_DATA_MB2/HIMinimumBias2/crab_rereco_PbPb2018_AOD_MinBias2_326943_ZDC/0000/testoftrimmer/parallelization_of_trimmer/ZDC_trimmed_rereco_PbPb2018_AOD_MinBias2_326943_RPDZDC_8.root");
-	
 
-	//chain.Add("/home/ebadams/PbPb2018_CMS_DATA_MB2/HIMinimumBias2/crab_rereco_PbPb2018_AOD_MinBias2_326943_ZDC/0000/testoftrimmer/parallelization_of_trimmer/ZDC_trimmed_rereco_PbPb2018_AOD_MinBias2_326943_RPDZDC_7.root");
-	//chain.Add("/home/ebadams/PbPb2018_CMS_DATA_MB2/HIMinimumBias2/crab_rereco_PbPb2018_AOD_MinBias2_326943_ZDC/0000/testoftrimmer/parallelization_of_trimmer/ZDC_trimmed_rereco_PbPb2018_AOD_MinBias2_326943_RPDZDC_25.root");
-	//TFile* f = new TFile("/home/ebadams/PbPb2018_CMS_DATA_MB2/HIMinimumBias2/crab_rereco_PbPb2018_AOD_MinBias2_326943_ZDC/0000/testoftrimmer/parallelization_of_trimmer/ZDC_trimmed_rereco_PbPb2018_AOD_MinBias2_326943_RPDZDC_7.root");
-
-
-	//TTree* ZDCDigiTree = (TTree*)T->chain.Get("zdcdigi")
 	TLeaf* eventLeaf;   //=   (TLeaf*)chain.GetLeaf("event");
 	TLeaf* zsideLeaf ;  //=   (TLeaf*)chain.GetLeaf("zside");
 	TLeaf* sectionLeaf; //= (TLeaf*)chain.GetLeaf("section");
@@ -85,10 +99,28 @@ void Fractional_weight_Eric_weighter_CHAIN(){
 
 	TLeaf* fCleaf[NTS];
 
-	
 
-	N_entries = chain.GetEntries();
 
+
+	/// Histograms
+
+	TH1D* RPD_Pos_X;
+		  RPD_Pos_X = new TH1D(Form("RPD_Pos_X %d", RunNumber), Form("RPD_Pos_X_%d_NBins_%d; RPD cm", RunNumber, NumberBinsPosition1D), NumberBinsPosition1D, -4, 4);
+	TH1D* RPD_Pos_Y;
+		  RPD_Pos_Y = new TH1D(Form("RPD_Pos_Y %d", RunNumber), Form("RPD_Pos_Y_%d_NBins_%d; RPD cm", RunNumber, NumberBinsPosition1D), NumberBinsPosition1D, -4, 4);
+	TH1D* RPD_Neg_X;
+		  RPD_Neg_X = new TH1D(Form("RPD_Neg_X %d", RunNumber), Form("RPD_Neg_X_%d_NBins_%d; RPD cm", RunNumber, NumberBinsPosition1D), NumberBinsPosition1D, -4, 4);
+	TH1D* RPD_Neg_Y;
+		  RPD_Neg_Y = new TH1D(Form("RPD_Neg_Y %d", RunNumber), Form("RPD_Neg_Y_%d_NBins_%d; RPD cm", RunNumber, NumberBinsPosition1D), NumberBinsPosition1D, -4, 4);
+
+	TH2D* RPD_XY_Pos;
+		  RPD_XY_Pos = new TH2D(Form("RPD_XY_Pos %d", RunNumber), Form("RPD_XY_Pos_%d_NBins_%d; X cm; Y cm", RunNumber, NumberBinsPosition2D), NumberBinsPosition2D, -4, 4, NumberBinsPosition2D, -4, 4);
+	TH2D* RPD_XY_Neg;
+		  RPD_XY_Neg = new TH2D(Form("RPD_XY_Neg %d", RunNumber), Form("RPD_XY_Neg_%d_NBins_%d; X cm; Y cm", RunNumber, NumberBinsPosition2D), NumberBinsPosition2D, -4, 4, NumberBinsPosition2D, -4, 4);
+	///
+
+
+	restart:
 	for (int i = 0; i < chain.GetEntries(); i++) {
 		chain.GetEntry(i);
 		//this is written this way bc this is how tchain workls otherwise it will break
@@ -101,12 +133,14 @@ void Fractional_weight_Eric_weighter_CHAIN(){
 			if ( i ==0){
 				RunNumber = runLeaf->GetValue(0);
 				RPD_Cuts_Generator(RunNumber, RPD_Cuts); //automatically determening runnumber and then choosing the cut values associated with that run
+				RPD_Frac_Generator(RunNumber, RPD_Frac);
 				cout << "RunNumber" << RunNumber << endl;
 			}
 			for (int iTS = 0; iTS < NTS; iTS++) {
 				fCleaf[iTS] = (TLeaf*)chain.GetLeaf(Form("nfC%d", iTS));
 				//fCPureleaf[iTS] = (TLeaf*)ZDCDigiTree->GetLeaf(Form("nfC%d", iTS));
 			}
+
 		for (int n = 0; n < NChannels; n++) { //iterates through all channels of both ZDC + and -
 
 			int side = (int)((zsideLeaf->GetValue(n) + 1) / 2.0);
@@ -123,6 +157,7 @@ void Fractional_weight_Eric_weighter_CHAIN(){
 			double TS_Seven = (fCleaf[7]->GetValue(n) <= 0) ? 0 : (fCleaf[7]->GetValue(n));
 			double TS_Eight = (fCleaf[8]->GetValue(n) <= 0) ? 0 : (fCleaf[8]->GetValue(n));
 			double TS_Nine  = (fCleaf[9]->GetValue(n) <= 0) ? 0 : (fCleaf[9]->GetValue(n));
+	
 
 	
 			double TS_ARRAY[NTS] = { TS_Zero, TS_One, TS_Two, TS_Three, TS_Four, TS_Five, TS_Six, TS_Seven, TS_Eight, TS_Nine};
@@ -132,38 +167,122 @@ void Fractional_weight_Eric_weighter_CHAIN(){
 					RawDataRPD[side][channel][TS] = TS_ARRAY[TS];
 				}
 			}
-		}
+		}//end of n 50 loop
+		
 		double OC_RPD_Data[2][16] = {0};
 
-		RPD_Data_Organizer_and_Cleaner(RawDataRPD, RPD_Cuts, OC_RPD_Data);
+		RPD_Data_Organizer_and_Cleaner(RawDataRPD, RPD_Cuts, OC_RPD_Data); // cleans and organizes RPD data into a sensible order start top left , read left to right, finish bottom right Quartz blocks
+
+		double OCC_RPD_Data[2][16] = {0};
 
 		for (int s = 0; s < 2; s ++){
-			if (OC_RPD_Data[s][0] == -343){
-				goto badvalue; // if a bad rpd event is detected it jumps the loop and counts up a bad rpd
+			if (OC_RPD_Data[s][0] == -343){ //NOTE this can produce arrays that are defualt filled with zeros need logic to not fill if entire array is zeros
+				N_bad_RPDs++;
+				continue;
+				//goto badvalue; // if a bad rpd event is detected it jumps the loop and counts up a bad rpd
 			}
-			for (int c = 0; c < 16; c++){
-				RPD_fC_Sum[s] += OC_RPD_Data[s][c];
-				RPD_Data_Channel_SUM[s][c] += OC_RPD_Data[s][c];
+			for ( int c = 0; c < 16; c++){
+				OCC_RPD_Data[s][c] = (OC_RPD_Data[s][c] /** RPD_Frac[s][c]*/);
 			}
 		}
 
-		if ( i % 100000 == 0) cout << "Events Processed: " << i << endl;
-		continue;
-		badvalue:
-			N_bad_RPDs++;
-			if ( i % 100000 == 0) cout << "Events Processed: " << i << endl;
-	}
+		double OCCS_RPD_Data[2][16] = {0}; // Organized Cleaned Centered SubtractedfiberEffect
 
+		Fiber_Effect_Subtractor(OCC_RPD_Data, Fiber_Subtraction_Percentage_, OCCS_RPD_Data); 
 
-	for (int s = 0; s < 2; s++){
-		for (int c = 0; c < 16; c++){
-			Fractional_Weights[s][c] = (Fractionals_Zero_Zero_blocks[c]/SUM_Zero_Zero_blocks)/(RPD_Data_Channel_SUM[s][c]/RPD_fC_Sum[s]);
-			cout << "F" << " side " << s << " :" << Fractional_Weights[s][c] << endl;
+		Returns_X_Y_P_N_RPD_Mean_Position(OCC_RPD_Data, "Off", EricWeighter, PosX, PosY, NegX, NegY); // produces mean x and y positions
+
+		if (posNOTgood){
+			P = 0;
+			for (int r = 0; r < 16; r++){
+				if(OCC_RPD_Data[1][r] == 0){
+					P++;
+				}
+			}
+			if (P < 2){
+				if (PosX != -343) {
+					RPD_Pos_X->Fill(PosX);
+				}
+				if (PosY != -343) {
+					RPD_Pos_Y->Fill(PosY);
+				}
+				if (PosX != -343 and PosY != -343){
+					RPD_XY_Pos->Fill(PosX,PosY);
+				}
+			}
 		}
+		if (negNOTgood){
+			N = 0;
+			for (int r = 0; r < 16; r++){
+				if(OCC_RPD_Data[0][r] == 0){
+					N++;
+				}
+			}
+			if (N < 2){
+				if (NegX != -343) {
+					RPD_Neg_X->Fill(NegX);
+				}
+				if (NegY != -343){
+					RPD_Neg_Y->Fill(NegY);
+				}
+				if (NegX != -343 and NegY != -343){
+					RPD_XY_Neg->Fill(NegX,NegY);
+				}
+			}
+		}
+		
+		//continue;
+		//badvalue:
+		//	N_bad_RPDs++;
+	}//END EVENT LOOP
+
+	RPD_Pos_Y_MEAN = RPD_Pos_Y->GetMean();
+	cout << "RPD_Pos_Y_MEAN " << RPD_Pos_Y_MEAN << " Fiber% " << Fiber_Subtraction_Percentage_[1] << endl;
+	RPD_Neg_Y_MEAN = RPD_Neg_Y->GetMean();
+	cout << "RPD_Neg_Y_MEAN " << RPD_Neg_Y_MEAN << " Fiber% " << Fiber_Subtraction_Percentage_[0] << endl;
+	
+	/*if( RPD_Pos_Y_MEAN < 0 ){
+		Fiber_Subtraction_Percentage_[1] += 0.01;
+		RPD_Pos_X->Reset();
+		RPD_Pos_Y->Reset();
+		RPD_XY_Pos->Reset();
+		cout << "upping Pos" << endl;
+		goto restart;
 	}
+	else{
+		posNOTgood = false;
+	}
+	if ( RPD_Neg_Y_MEAN < 0){
+		Fiber_Subtraction_Percentage_[0] += 0.01;
+		RPD_Neg_X->Reset();
+		RPD_Neg_Y->Reset();
+		RPD_XY_Neg->Reset();
+		cout << "upping Neg" << endl;
+		goto restart;
 
-	cout << "num bad RPD" << N_bad_RPDs << " " << "N_entries " << N_entries << endl;
+	}
+	else{
+		negNOTgood = false;
+	}*/
 
+	TCanvas* c1 = new TCanvas(Form("c1"), Form("RUN_%d", RunNumber), 2000, 2000);
+
+	RPD_Pos_X->Draw("HIST L");
+	c1->Print(Form("RPD_Pos_X.png"));
+	RPD_Pos_Y->Draw("HIST L");
+	c1->Print(Form("RPD_Pos_Y.png"));
+	RPD_Neg_X->Draw("HIST L");
+	c1->Print(Form("RPD_Neg_X.png"));
+	RPD_Neg_Y->Draw("HIST L");
+	c1->Print(Form("RPD_Neg_Y.png"));
+	RPD_XY_Pos->Draw("COLZ");
+	c1->Print(Form("RPD_XY_Pos.png"));
+	RPD_XY_Neg->Draw("COLZ");
+	c1->Print(Form("RPD_XY_Neg.png"));
+
+	cout << "num bad RPD" << N_bad_RPDs/2 << " " << "N_entries " << N_entries << endl;
+	cout << "percentages for fibers" << " Neg " << Fiber_Subtraction_Percentage_[0] << " Pos " << Fiber_Subtraction_Percentage_[1] << endl;
+		
 }
 
 
