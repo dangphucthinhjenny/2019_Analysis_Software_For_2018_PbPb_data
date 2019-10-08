@@ -28,7 +28,7 @@ also want cent
 #include "TLeaf.h"
 #include "TROOT.h"
 
-#include "/home/ebadams/TEST_FOR_ANALYSIS_SOFTWARE/HEADER/MASTER_HEADER.h"
+#include "/home/ebadams/TEST_FOR_ANALYSIS_SOFTWARE/HEADER/MASTER_HEADER_fixed_fourier.h"
 
 
 
@@ -105,6 +105,7 @@ void RPD_Mean_Position(){
 	RPD_Frac_Generator(RunNumber, RPD_Frac);
 	
 	restart:
+	N_bad_RPDs = 0;
 	for (int i = 0; i < ZDCDigiTree->GetEntries(); i++) {
 		ZDCDigiTree->GetEntry(i);
 
@@ -149,7 +150,7 @@ void RPD_Mean_Position(){
 				//goto badvalue; // if a bad rpd event is detected it jumps the loop and counts up a bad rpd
 			}
 			for ( int c = 0; c < 16; c++){
-				OCC_RPD_Data[s][c] = (OC_RPD_Data[s][c] * RPD_Frac[s][c]);
+				OCC_RPD_Data[s][c] = (OC_RPD_Data[s][c] * RPD_Frac[0][s][c]);
 			}
 		}
 
@@ -193,7 +194,7 @@ void RPD_Mean_Position(){
 					RPD_Neg_Y->Fill(NegY);
 				}
 				if (NegX != -343 and NegY != -343){
-					RPD_XY_Neg->Fill(NegX,NegY);
+					RPD_XY_Neg->Fill(NegX,NegY); 
 				}
 			}
 		}
@@ -203,9 +204,9 @@ void RPD_Mean_Position(){
 		//	N_bad_RPDs++;
 	}//END EVENT LOOP
 
-	RPD_Pos_Y_MEAN = RPD_Pos_Y->GetMean();
+	RPD_Pos_Y_MEAN = RPD_Pos_Y->GetMean(); //flipped
 	cout << "RPD_Pos_Y_MEAN " << RPD_Pos_Y_MEAN << " Fiber% " << Fiber_Subtraction_Percentage_[1] << endl;
-	RPD_Neg_Y_MEAN = RPD_Neg_Y->GetMean();
+	RPD_Neg_Y_MEAN = RPD_Neg_Y->GetMean(); //flipped
 	cout << "RPD_Neg_Y_MEAN " << RPD_Neg_Y_MEAN << " Fiber% " << Fiber_Subtraction_Percentage_[0] << endl;
 	
 	if ( RPD_Pos_Y_MEAN < 0 and RPD_Neg_Y_MEAN < 0 ){

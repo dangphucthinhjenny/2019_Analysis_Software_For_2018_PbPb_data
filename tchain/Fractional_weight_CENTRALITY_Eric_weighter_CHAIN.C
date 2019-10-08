@@ -32,7 +32,7 @@ also want cent
 #include <cstring>
 #include <iostream>
 
-#include "/home/ebadams/TEST_FOR_ANALYSIS_SOFTWARE/HEADER/MASTER_HEADER.h"
+#include "/home/ebadams/TEST_FOR_ANALYSIS_SOFTWARE/HEADER/MASTER_HEADER_fixed_fourier.h"
 
 
 using namespace std;

@@ -29,7 +29,7 @@ also want cent
 #include "TROOT.h"
 #include "TChain.h"
 
-#include "/home/ebadams/TEST_FOR_ANALYSIS_SOFTWARE/HEADER/MASTER_HEADER.h"
+#include "/home/ebadams/TEST_FOR_ANALYSIS_SOFTWARE/HEADER/MASTER_HEADER_fixed_fourier.h"
 
 
 
@@ -182,7 +182,7 @@ void RPD_Mean_Position_CHAIN(){
 				//goto badvalue; // if a bad rpd event is detected it jumps the loop and counts up a bad rpd
 			}
 			for ( int c = 0; c < 16; c++){
-				OCC_RPD_Data[s][c] = (OC_RPD_Data[s][c] * RPD_Frac[s][c]);
+				OCC_RPD_Data[s][c] = ((OC_RPD_Data[s][c]) * (RPD_Frac[0][s][c]));
 			}
 		}
 
@@ -241,7 +241,7 @@ void RPD_Mean_Position_CHAIN(){
 	RPD_Neg_Y_MEAN = RPD_Neg_Y->GetMean();
 	cout << "RPD_Neg_Y_MEAN " << RPD_Neg_Y_MEAN << " Fiber% " << Fiber_Subtraction_Percentage_[0] << endl;
 	
-	/*if( RPD_Pos_Y_MEAN < 0 ){
+	if( RPD_Pos_Y_MEAN < 0 ){
 		Fiber_Subtraction_Percentage_[1] += 0.01;
 		RPD_Pos_X->Reset();
 		RPD_Pos_Y->Reset();
@@ -263,7 +263,7 @@ void RPD_Mean_Position_CHAIN(){
 	}
 	else{
 		negNOTgood = false;
-	}*/
+	}
 
 	TCanvas* c1 = new TCanvas(Form("c1"), Form("RUN_%d", RunNumber), 2000, 2000);
 
